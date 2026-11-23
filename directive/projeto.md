@@ -97,3 +97,13 @@ Desenvolver um sistema web completo para coletar, analisar e gerenciar avaliaç�
 3. **Resiliência e Integridade no Disparo de Alertas (SMTP):**
    - O disparo de e-mails conta com fallback automático para gravação estruturada em `.tmp/alerts.log` quando credenciais SMTP não forem informadas ou em quedas de rede externa.
    - Consolidação rigorosa dos dados do cliente (`nome`, `contato`, `pedido_id`, `comentario`) antes do acionamento do serviço de alerta, garantindo que nenhum e-mail seja despachado com dados anônimos ou em branco quando fornecidos pelo cliente.
+
+4. **Detecção e Tratamento Instantâneo de Falhas de Rede/DNS na IA:**
+   - Tratamento específico de `socket.gaierror` e erro `11001` (getaddrinfo failed), permitindo comutação imediata para a contingência local sem consumir múltiplos ciclos de timeout e backoff em ambientes desconectados ou sandboxed.
+   - Garantia de latência sub-segundo mesmo durante instabilidades na API do Google Gemini.
+
+5. **Compatibilidade Híbrida para Nuvem e GitHub Pages:**
+   - Estruturação dual dos entregáveis: o servidor Flask unificado atende `/` e `/admin` com banco JSON persistente, enquanto a raiz expõe `index.html` e `admin.html` adaptáveis para GitHub Pages com fallback gracioso em LocalStorage.
+
+6. **Higiene e Proteção Rigorosa de Credenciais:**
+   - Bloqueio completo do `.env` no `.gitignore` e sanitização automática da URL de push remoto, impedindo que tokens pessoais (`GITHUB_PERSONAL_TOKEN`) e chaves (`GEMINI_API_KEY`) vazem para o histórico do repositório público.
