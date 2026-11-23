@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel Administrativo - BurgerSync Ourinhos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0c10;
+      --card-bg: #131620;
+      --card-border: #222638;
+      --accent: #f59e0b;
+      --accent-glow: rgba(245, 158, 11, 0.2);
+      --text: #f3f4f6;
+      --text-muted: #9ca3af;
+      --positive: #10b981;
+      --neutral: #9ca3af;
+      --critical: #ef4444;
+      --critical-bg: rgba(239, 68, 68, 0.12);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 24px;
+    }
+
+    .container { max-width: 1200px; margin: 0 auto; }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 28px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--card-border);
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .brand-title { display: flex; align-items: center; gap: 12px; }
+    .brand-logo { font-size: 32px; }
+    .brand-title h1 { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+    .brand-title p { color: var(--text-muted); font-size: 13px; }
+
+    .header-actions { display: flex; gap: 12px; align-items: center; }
+
+    .btn {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .btn:hover { border-color: var(--accent); background: #1b2030; }
+    .btn-primary { background: var(--accent); color: #000; border: none; font-weight: 700; }
+    .btn-primary:hover { background: #d97706; }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .kpi-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .kpi-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 3px;
+      background: var(--card-border);
+    }
+
+    .kpi-card.kpi-total::before { background: var(--accent); }
+    .kpi-card.kpi-pos::before { background: var(--positive); }
+    .kpi-card.kpi-neu::before { background: var(--neutral); }
+    .kpi-card.kpi-cri::before { background: var(--critical); }
+
+    .kpi-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .kpi-value { font-size: 28px; font-weight: 800; margin-bottom: 4px; }
+    .kpi-subtitle { font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 4px; }
+
+    .alert-banner {
+      background: var(--critical-bg);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      border-radius: 14px;
+      padding: 18px 22px;
+      margin-bottom: 24px;
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      animation: pulse 2.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.3); }
+      50% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+    }
+
+    .alert-banner-content { display: flex; align-items: center; gap: 16px; }
+    .alert-banner-icon { font-size: 28px; }
+    .alert-banner h3 { font-size: 15px; font-weight: 800; color: #ef4444; }
+    .alert-banner p { font-size: 13px; color: #fca5a5; margin-top: 2px; }
+
+    .filters-bar {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .filter-group { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .filter-label { font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
+
+    .filter-btn {
+      background: #0b0c10;
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .filter-btn.active, .filter-btn:hover { background: #1b2030; color: #fff; border-color: var(--accent); }
+    .filter-btn.badge-cri.active { background: rgba(239, 68, 68, 0.2); border-color: var(--critical); color: #ef4444; }
+
+    .search-input {
+      background: #0b0c10;
+      border: 1px solid var(--card-border);
+      color: #fff;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      outline: none;
+      min-width: 240px;
+    }
+
+    .search-input:focus { border-color: var(--accent); }
+
+    .select-dropdown {
+      background: #0b0c10;
+      border: 1px solid var(--card-border);
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .feedbacks-container { display: flex; flex-direction: column; gap: 14px; }
+
+    .feedback-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 20px 24px;
+      transition: border-color 0.2s ease, transform 0.2s ease;
+      position: relative;
+    }
+
+    .feedback-card:hover { border-color: #3b4258; }
+    .feedback-card.card-critico { border-left: 4px solid var(--critical); }
+    .feedback-card.card-positivo { border-left: 4px solid var(--positive); }
+    .feedback-card.card-neutro { border-left: 4px solid var(--neutral); }
+
+    .feedback-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .customer-info { display: flex; align-items: center; gap: 12px; }
+
+    .customer-avatar {
+      width: 42px; height: 42px;
+      border-radius: 10px;
+      background: #1b2030;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: var(--accent);
+      font-size: 16px;
+      border: 1px solid var(--card-border);
+    }
+
+    .customer-name { font-size: 15px; font-weight: 700; color: #fff; }
+    .customer-meta { font-size: 12px; color: var(--text-muted); display: flex; gap: 10px; margin-top: 2px; }
+    .feedback-rating { color: var(--accent); letter-spacing: 2px; font-size: 14px; }
+
+    .feedback-comment {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #e5e7eb;
+      margin-bottom: 14px;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 12px 16px;
+      border-radius: 10px;
+      border-left: 2px solid var(--card-border);
+    }
+
+    .tags-container { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+
+    .tag-pill {
+      background: #1b2030;
+      color: #93c5fd;
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      border: 1px solid #2e3852;
+    }
+
+    .ai-summary { font-size: 12px; color: #9ca3af; margin-top: 10px; display: flex; align-items: center; gap: 6px; }
+
+    .ai-badge {
+      background: rgba(139, 92, 246, 0.2);
+      color: #c4b5fd;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .alert-sent-badge {
+      background: rgba(239, 68, 68, 0.2);
+      color: #ef4444;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.8);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-content {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 700px;
+      max-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .modal-header {
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--card-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h2 { font-size: 18px; font-weight: 700; }
+
+    .modal-close {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    .modal-body {
+      padding: 20px 24px;
+      overflow-y: auto;
+      font-family: monospace;
+      font-size: 12px;
+      line-height: 1.5;
+      color: #d1d5db;
+      white-space: pre-wrap;
+      background: #090a0d;
+    }
+
+    .empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <div class="brand-title">
+        <span class="brand-logo">🍔</span>
+        <div>
+          <h1>BurgerSync Ourinhos</h1>
+          <p>Painel de Controle e Gestão de Avaliações em Tempo Real</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="btn" onclick="openAlertsModal()">📜 Ver Logs de Alertas (.tmp)</button>
+        <a href="index.html" id="publicLinkElem" target="_blank" class="btn btn-primary">➕ Página Pública de Feedback</a>
+      </div>
+    </header>
+
+    <div class="alert-banner" id="crisisBanner">
+      <div class="alert-banner-content">
+        <span class="alert-banner-icon">🚨</span>
+        <div>
+          <h3 id="crisisBannerTitle">Atenção: Existem avaliações críticas pendentes!</h3>
+          <p id="crisisBannerText">Clientes relataram insatisfação grave. Contato imediato requerido pela gerência.</p>
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="filterBySentiment('Crítico')">Ver Pendências Críticas</button>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card kpi-total">
+        <div class="kpi-title">Total de Avaliações</div>
+        <div class="kpi-value" id="kpiTotal">0</div>
+        <div class="kpi-subtitle">Média: <span id="kpiAvgRating" style="font-weight:700; color:var(--accent);">5.0★</span></div>
+      </div>
+
+      <div class="kpi-card kpi-pos">
+        <div class="kpi-title">Positivos</div>
+        <div class="kpi-value" id="kpiPositivos" style="color:var(--positive);">0</div>
+        <div class="kpi-subtitle"><span id="kpiPctPos">0%</span> do total</div>
+      </div>
+
+      <div class="kpi-card kpi-neu">
+        <div class="kpi-title">Neutros</div>
+        <div class="kpi-value" id="kpiNeutros" style="color:var(--neutral);">0</div>
+        <div class="kpi-subtitle"><span id="kpiPctNeu">0%</span> do total</div>
+      </div>
+
+      <div class="kpi-card kpi-cri">
+        <div class="kpi-title">Críticos / Crises</div>
+        <div class="kpi-value" id="kpiCriticos" style="color:var(--critical);">0</div>
+        <div class="kpi-subtitle"><span id="kpiCriticosPendentes" style="color:#ef4444; font-weight:700;">0 pendentes</span></div>
+      </div>
+    </div>
+
+    <div class="filters-bar">
+      <div class="filter-group">
+        <span class="filter-label">Sentimento:</span>
+        <button class="filter-btn active" onclick="setSentimentFilter('Todos', this)">Todos</button>
+        <button class="filter-btn" onclick="setSentimentFilter('Positivo', this)">Positivo</button>
+        <button class="filter-btn" onclick="setSentimentFilter('Neutro', this)">Neutro</button>
+        <button class="filter-btn badge-cri" onclick="setSentimentFilter('Crítico', this)">🚨 Crítico</button>
+      </div>
+
+      <div class="filter-group">
+        <input type="text" class="search-input" id="searchInput" placeholder="🔍 Buscar por cliente, pedido, texto..." oninput="handleSearch()">
+        
+        <select class="select-dropdown" id="sortSelect" onchange="loadFeedbacks()">
+          <option value="recent">Mais Recentes</option>
+          <option value="oldest">Mais Antigos</option>
+          <option value="rating_desc">Maior Nota (★)</option>
+          <option value="rating_asc">Menor Nota (★)</option>
+        </select>
+
+        <button class="btn" onclick="loadFeedbacks()" title="Recarregar">🔄</button>
+      </div>
+    </div>
+
+    <div class="feedbacks-container" id="feedbacksContainer">
+      <div class="empty-state">Carregando avaliações...</div>
+    </div>
+  </div>
+
+  <div class="modal" id="alertsModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>📜 Histórico de Alertas de Crise (.tmp/alerts.log)</h2>
+        <button class="modal-close" onclick="closeAlertsModal()">&times;</button>
+      </div>
+      <div class="modal-body" id="alertsModalBody">Carregando histórico...</div>
+    </div>
+  </div>
+
+  <script>
+    const isPublicStatic = window.location.pathname.endsWith('.html') || window.location.hostname.includes('github.io');
+    document.getElementById('publicLinkElem').href = isPublicStatic ? 'index.html' : '/';
+
+    let currentSentiment = 'Todos';
+    let searchQuery = '';
+
+    // Amostra inicial padrão caso esteja rodando offline/estático no GitHub Pages
+    const DEFAULT_STATIC_FEEDBACKS = [
+      {
+        id: "fb_demo_01",
+        timestamp: new Date().toISOString(),
+        nome: "Lucas Martins",
+        contato: "(14) 99876-1122",
+        pedido_id: "ORD-1042",
+        nota: 5,
+        comentario: "O Burger Trufado com maionese da casa estava sensacional! O ponto da carne perfeito e chegou muito rápido aqui na Vila Operária.",
+        sentimento: "Positivo",
+        tags: ["Sabor", "Qualidade", "Entrega"],
+        status: "resolvida",
+        alerta_disparado: false,
+        detalhes_analise: "Elogio enfático ao sabor do lanche e à rapidez da entrega."
+      },
+      {
+        id: "fb_demo_02",
+        timestamp: new Date(Date.now() - 3600000).toISOString(),
+        nome: "Fernanda Lima",
+        contato: "(14) 99765-3344",
+        pedido_id: "ORD-1049",
+        nota: 3,
+        comentario: "O hambúrguer é bom, mas a batata frita chegou meio murcha e fria. Poderiam melhorar a embalagem de entrega.",
+        sentimento: "Neutro",
+        tags: ["Entrega", "Embalagem", "Sabor"],
+        status: "lida",
+        alerta_disparado: false,
+        detalhes_analise: "Feedback moderado com sugestão de melhoria na embalagem térmica da batata."
+      },
+      {
+        id: "fb_demo_03",
+        timestamp: new Date(Date.now() - 7200000).toISOString(),
+        nome: "Carlos Eduardo",
+        contato: "(14) 99123-5566",
+        pedido_id: "ORD-1055",
+        nota: 1,
+        comentario: "Um absurdo! Esperei mais de 1 hora e 40 minutos pelo pedido. Quando chegou, o lanche estava completamente frio e o refrigerante veio errado. Péssima experiência!",
+        sentimento: "Crítico",
+        tags: ["Entrega", "Atraso", "Pedido Incorreto", "Temperatura"],
+        status: "pendente",
+        alerta_disparado: true,
+        detalhes_analise: "Reclamação grave de atraso excessivo e erro no item entregue. Risco de churn do cliente."
+      }
+    ];
+
+    function getLocalFeedbacks() {
+      const stored = localStorage.getItem('burgersync_feedbacks');
+      if (!stored) {
+        localStorage.setItem('burgersync_feedbacks', JSON.stringify(DEFAULT_STATIC_FEEDBACKS));
+        return DEFAULT_STATIC_FEEDBACKS;
+      }
+      return JSON.parse(stored);
+    }
+
+    function setSentimentFilter(sent, btn) {
+      currentSentiment = sent;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      loadFeedbacks();
+    }
+
+    function filterBySentiment(sent) {
+      const btn = Array.from(document.querySelectorAll('.filter-btn')).find(b => b.textContent.includes(sent));
+      if (btn) setSentimentFilter(sent, btn);
+    }
+
+    let searchTimeout = null;
+    function handleSearch() {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        searchQuery = document.getElementById('searchInput').value.trim();
+        loadFeedbacks();
+      }, 300);
+    }
+
+    async function updateKPIs() {
+      try {
+        let data;
+        try {
+          const res = await fetch('/api/stats');
+          if (res.ok) data = await res.json();
+        } catch (e) {}
+
+        if (!data) {
+          const local = getLocalFeedbacks();
+          const total = local.length;
+          const pos = local.filter(f => f.sentimento === 'Positivo').length;
+          const neu = local.filter(f => f.sentimento === 'Neutro').length;
+          const cri = local.filter(f => f.sentimento === 'Crítico').length;
+          const pend = local.filter(f => f.sentimento === 'Crítico' && (f.status === 'pendente' || f.status === 'em_tratamento')).length;
+          const media = total > 0 ? (local.reduce((acc, f) => acc + (f.nota || 5), 0) / total).toFixed(1) : '5.0';
+
+          data = {
+            total,
+            positivos: pos,
+            neutros: neu,
+            criticos: cri,
+            pct_positivos: total > 0 ? ((pos / total) * 100).toFixed(1) : 0,
+            pct_neutros: total > 0 ? ((neu / total) * 100).toFixed(1) : 0,
+            pct_criticos: total > 0 ? ((cri / total) * 100).toFixed(1) : 0,
+            criticos_pendentes: pend,
+            media_nota: media
+          };
+        }
+
+        document.getElementById('kpiTotal').textContent = data.total;
+        document.getElementById('kpiAvgRating').textContent = `${data.media_nota}★`;
+        document.getElementById('kpiPositivos').textContent = data.positivos;
+        document.getElementById('kpiPctPos').textContent = `${data.pct_positivos}%`;
+        document.getElementById('kpiNeutros').textContent = data.neutros;
+        document.getElementById('kpiPctNeu').textContent = `${data.pct_neutros}%`;
+        document.getElementById('kpiCriticos').textContent = data.criticos;
+        document.getElementById('kpiCriticosPendentes').textContent = `${data.criticos_pendentes} pendentes`;
+
+        const banner = document.getElementById('crisisBanner');
+        if (data.criticos_pendentes > 0) {
+          banner.style.display = 'flex';
+          document.getElementById('crisisBannerTitle').textContent = `🚨 Atenção: ${data.criticos_pendentes} avaliação(ões) crítica(s) pendente(s)!`;
+        } else {
+          banner.style.display = 'none';
+        }
+      } catch (e) {
+        console.error('Falha ao obter KPIs', e);
+      }
+    }
+
+    async function loadFeedbacks() {
+      const sort = document.getElementById('sortSelect').value;
+      let list = null;
+
+      try {
+        let url = `/api/feedbacks?sort=${sort}`;
+        if (currentSentiment !== 'Todos') url += `&sentimento=${encodeURIComponent(currentSentiment)}`;
+        if (searchQuery) url += `&search=${encodeURIComponent(searchQuery)}`;
+        const res = await fetch(url);
+        if (res.ok) list = await res.json();
+      } catch (e) {}
+
+      if (!list) {
+        let local = getLocalFeedbacks();
+        if (currentSentiment !== 'Todos') {
+          local = local.filter(f => (f.sentimento || '').toLowerCase() === currentSentiment.toLowerCase());
+        }
+        if (searchQuery) {
+          const q = searchQuery.toLowerCase();
+          local = local.filter(f => (f.nome || '').toLowerCase().includes(q) || (f.comentario || '').toLowerCase().includes(q) || (f.pedido_id || '').toLowerCase().includes(q));
+        }
+        if (sort === 'recent') local.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+        else if (sort === 'oldest') local.sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp));
+        else if (sort === 'rating_desc') local.sort((a,b) => (b.nota || 0) - (a.nota || 0));
+        else if (sort === 'rating_asc') local.sort((a,b) => (a.nota || 0) - (b.nota || 0));
+        list = local;
+      }
+
+      const container = document.getElementById('feedbacksContainer');
+
+      if (list.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <h3>Nenhuma avaliação encontrada com os filtros selecionados.</h3>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = list.map(item => {
+        const sentClass = (item.sentimento || 'neutro').toLowerCase();
+        const stars = '★'.repeat(item.nota || 5) + '☆'.repeat(5 - (item.nota || 5));
+        const tagsHtml = (item.tags || []).map(t => `<span class="tag-pill">${t}</span>`).join('');
+        
+        const alertBadgeHtml = item.alerta_disparado ? 
+          `<span class="alert-sent-badge">🚨 Alerta Gerencial Disparado</span>` : '';
+
+        const currentStatus = item.status || 'pendente';
+
+        const statusSelectHtml = `
+          <select class="select-dropdown status-${currentStatus}" onchange="changeStatus('${item.id}', this.value)" style="font-weight:700;">
+            <option value="pendente" ${currentStatus === 'pendente' ? 'selected' : ''}>🔴 Pendente</option>
+            <option value="lida" ${currentStatus === 'lida' ? 'selected' : ''}>⚪ Lida</option>
+            <option value="em_tratamento" ${currentStatus === 'em_tratamento' ? 'selected' : ''}>🟡 Em Tratamento</option>
+            <option value="resolvida" ${currentStatus === 'resolvida' ? 'selected' : ''}>🟢 Resolvida</option>
+          </select>
+        `;
+
+        const initial = (item.nome || 'C').charAt(0).toUpperCase();
+
+        return `
+          <div class="feedback-card card-${sentClass}">
+            <div class="feedback-header">
+              <div class="customer-info">
+                <div class="customer-avatar">${initial}</div>
+                <div>
+                  <div class="customer-name">${escapeHtml(item.nome)}</div>
+                  <div class="customer-meta">
+                    <span>📱 ${escapeHtml(item.contato)}</span>
+                    <span>🧾 Pedido: <strong>${escapeHtml(item.pedido_id)}</strong></span>
+                    <span>🕒 ${new Date(item.timestamp).toLocaleString('pt-BR')}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div style="display:flex; align-items:center; gap:12px;">
+                <div class="feedback-rating">${stars}</div>
+                ${statusSelectHtml}
+              </div>
+            </div>
+
+            <div class="feedback-comment">
+              "${escapeHtml(item.comentario)}"
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+              <div class="tags-container">
+                <span style="font-size:11px; font-weight:700; color:var(--text-muted);">TAGS:</span>
+                ${tagsHtml}
+                ${alertBadgeHtml}
+              </div>
+              <div class="ai-summary">
+                <span class="ai-badge">IA Gemini</span>
+                <span>${escapeHtml(item.detalhes_analise || '')}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function changeStatus(id, newStatus) {
+      let updatedViaApi = false;
+      try {
+        const res = await fetch(`/api/feedbacks/${id}/status`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: newStatus })
+        });
+        if (res.ok) updatedViaApi = true;
+      } catch (e) {}
+
+      // Atualiza também no localStorage caso esteja rodando offline/GitHub Pages
+      const local = getLocalFeedbacks();
+      const item = local.find(f => f.id === id);
+      if (item) {
+        item.status = newStatus;
+        localStorage.setItem('burgersync_feedbacks', JSON.stringify(local));
+      }
+
+      await updateKPIs();
+      await loadFeedbacks();
+    }
+
+    async function openAlertsModal() {
+      const modal = document.getElementById('alertsModal');
+      const body = document.getElementById('alertsModalBody');
+      modal.style.display = 'flex';
+      body.textContent = 'Carregando histórico de alertas...';
+
+      try {
+        const res = await fetch('/api/alerts');
+        if (res.ok) {
+          const logs = await res.json();
+          if (logs.length === 0) {
+            body.textContent = 'Nenhum alerta crítico registrado até o momento em .tmp/alerts.log.';
+          } else {
+            body.textContent = logs.join('\n\n' + '='.repeat(80) + '\n\n');
+          }
+          return;
+        }
+      } catch (e) {}
+
+      // Fallback em caso de GitHub Pages estático
+      const local = getLocalFeedbacks().filter(f => f.sentimento === 'Crítico');
+      if (local.length === 0) {
+        body.textContent = 'Nenhum alerta crítico registrado até o momento.';
+      } else {
+        body.textContent = local.map(f => 
+          `[ALERTA CRÍTICO SIMULADO - GITHUB PAGES]\nPedido: ${f.pedido_id}\nCliente: ${f.nome} (${f.contato})\nNota: ${f.nota}/5\nTags: ${(f.tags || []).join(', ')}\nComentário: "${f.comentario}"`
+        ).join('\n\n' + '='.repeat(80) + '\n\n');
+      }
+    }
+
+    function closeAlertsModal() {
+      document.getElementById('alertsModal').style.display = 'none';
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    updateKPIs();
+    loadFeedbacks();
+    setInterval(updateKPIs, 10000);
+  </script>
+</body>
+</html>

@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BurgerSync Ourinhos - Avalie sua Experiência</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0c0d12;
+      --card-bg: #141721;
+      --card-border: #232738;
+      --accent: #f59e0b;
+      --accent-hover: #d97706;
+      --accent-glow: rgba(245, 158, 11, 0.25);
+      --text: #f3f4f6;
+      --text-muted: #9ca3af;
+      --success: #10b981;
+      --danger: #ef4444;
+      --neutral: #6b7280;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(245, 158, 11, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(239, 68, 68, 0.05) 0%, transparent 40%);
+    }
+
+    .container {
+      width: 100%;
+      max-width: 580px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 36px 32px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.03);
+      position: relative;
+    }
+
+    .brand { text-align: center; margin-bottom: 28px; }
+
+    .brand-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--accent);
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      border: 1px solid rgba(245, 158, 11, 0.25);
+    }
+
+    .brand h1 {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: #fff;
+    }
+
+    .brand p { color: var(--text-muted); font-size: 14px; margin-top: 6px; }
+
+    .form-group { margin-bottom: 20px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #e5e7eb;
+    }
+
+    input[type="text"], textarea {
+      width: 100%;
+      background: #0b0c10;
+      border: 1px solid var(--card-border);
+      color: #fff;
+      font-family: inherit;
+      font-size: 14px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      transition: all 0.2s ease;
+      outline: none;
+    }
+
+    input[type="text"]:focus, textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    textarea { min-height: 110px; resize: vertical; }
+
+    .rating-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 16px 0 24px;
+      background: rgba(0, 0, 0, 0.25);
+      padding: 16px;
+      border-radius: 14px;
+      border: 1px solid var(--card-border);
+    }
+
+    .rating-title { font-size: 13px; color: var(--text-muted); margin-bottom: 8px; font-weight: 600; }
+    .stars { display: flex; gap: 10px; cursor: pointer; }
+    .star { font-size: 32px; color: #374151; transition: color 0.15s ease, transform 0.15s ease; user-select: none; }
+    .star.active, .star.hover { color: var(--accent); transform: scale(1.1); }
+    .rating-label { font-size: 14px; font-weight: 700; color: var(--accent); margin-top: 8px; }
+
+    .btn-submit {
+      width: 100%;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+      color: #000;
+      border: none;
+      padding: 14px 20px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 15px var(--accent-glow);
+    }
+
+    .btn-submit:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+    }
+
+    .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .spinner {
+      width: 20px; height: 20px;
+      border: 3px solid rgba(0, 0, 0, 0.2);
+      border-top-color: #000;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      display: none;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .result-modal { display: none; text-align: center; padding: 24px 12px; }
+    .result-icon { font-size: 54px; margin-bottom: 12px; }
+    .result-title { font-size: 20px; font-weight: 800; margin-bottom: 8px; }
+    .result-desc { color: var(--text-muted); font-size: 14px; line-height: 1.5; margin-bottom: 20px; }
+    .result-badge { display: inline-block; padding: 4px 12px; border-radius: 9999px; font-size: 12px; font-weight: 700; margin-bottom: 20px; }
+    .badge-positivo { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+    .badge-neutro { background: rgba(156, 163, 175, 0.2); color: #d1d5db; }
+    .badge-critico { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+
+    .admin-link {
+      display: block;
+      text-align: center;
+      margin-top: 24px;
+      color: var(--text-muted);
+      font-size: 13px;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .admin-link:hover { color: var(--accent); }
+
+    @media (max-width: 520px) {
+      .container { padding: 24px 18px; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div id="formSection">
+      <div class="brand">
+        <span class="brand-badge">🍔 BurgerSync Ourinhos</span>
+        <h1>Sua opinião faz a diferença!</h1>
+        <p>Conte-nos como foi sua experiência com nossos hambúrgueres artesanais.</p>
+      </div>
+
+      <form id="feedbackForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="nome">Seu Nome</label>
+            <input type="text" id="nome" placeholder="Ex: Lucas Martins" required>
+          </div>
+          <div class="form-group">
+            <label for="contato">WhatsApp / E-mail</label>
+            <input type="text" id="contato" placeholder="(14) 99876-5432" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="pedido_id">Número do Pedido (Opcional)</label>
+          <input type="text" id="pedido_id" placeholder="Ex: ORD-1089">
+        </div>
+
+        <div class="rating-container">
+          <span class="rating-title">COMO VOCÊ AVALIA SUA EXPERIÊNCIA?</span>
+          <div class="stars" id="starContainer">
+            <span class="star active" data-value="1">★</span>
+            <span class="star active" data-value="2">★</span>
+            <span class="star active" data-value="3">★</span>
+            <span class="star active" data-value="4">★</span>
+            <span class="star active" data-value="5">★</span>
+          </div>
+          <div class="rating-label" id="ratingLabel">5 Estrelas - Excelente!</div>
+        </div>
+
+        <div class="form-group">
+          <label for="comentario">Comentário ou Sugestão *</label>
+          <textarea id="comentario" placeholder="Conte detalhes sobre o sabor, o ponto da carne, atendimento ou entrega..." required></textarea>
+        </div>
+
+        <button type="submit" class="btn-submit" id="submitBtn">
+          <span id="btnText">Enviar Minha Avaliação</span>
+          <div class="spinner" id="spinner"></div>
+        </button>
+      </form>
+    </div>
+
+    <!-- Modal de Sucesso -->
+    <div class="result-modal" id="resultModal">
+      <div class="result-icon" id="resIcon">🎉</div>
+      <h2 class="result-title" id="resTitle">Muito obrigado pelo seu feedback!</h2>
+      <div class="result-badge" id="resBadge">Análise Concluída</div>
+      <p class="result-desc" id="resDesc">
+        Sua avaliação foi analisada e encaminhada à equipe do BurgerSync Ourinhos.
+      </p>
+      <button class="btn-submit" onclick="resetForm()">Enviar Outro Feedback</button>
+    </div>
+
+    <a href="admin.html" id="adminLinkElem" class="admin-link">🔒 Painel Administrativo de Gestão</a>
+  </div>
+
+  <script>
+    // Ajuste dinâmico de links para ambiente Flask vs GitHub Pages estático
+    const isAdminStatic = window.location.pathname.endsWith('.html') || window.location.hostname.includes('github.io');
+    document.getElementById('adminLinkElem').href = isAdminStatic ? 'admin.html' : '/admin';
+
+    let currentRating = 5;
+    const ratingTexts = {
+      1: "1 Estrela - Muito Insatisfeito",
+      2: "2 Estrelas - Ruim",
+      3: "3 Estrelas - Regular / Aceitável",
+      4: "4 Estrelas - Bom!",
+      5: "5 Estrelas - Excelente!"
+    };
+
+    const stars = document.querySelectorAll('.star');
+    const ratingLabel = document.getElementById('ratingLabel');
+
+    stars.forEach(star => {
+      star.addEventListener('click', () => {
+        currentRating = parseInt(star.getAttribute('data-value'));
+        updateStars(currentRating);
+      });
+      star.addEventListener('mouseover', () => {
+        const hoverVal = parseInt(star.getAttribute('data-value'));
+        stars.forEach(s => {
+          s.classList.toggle('hover', parseInt(s.getAttribute('data-value')) <= hoverVal);
+        });
+      });
+      star.addEventListener('mouseout', () => {
+        stars.forEach(s => s.classList.remove('hover'));
+      });
+    });
+
+    function updateStars(val) {
+      stars.forEach(s => {
+        s.classList.toggle('active', parseInt(s.getAttribute('data-value')) <= val);
+      });
+      ratingLabel.textContent = ratingTexts[val];
+    }
+
+    const form = document.getElementById('feedbackForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const btnText = document.getElementById('btnText');
+    const spinner = document.getElementById('spinner');
+    const formSection = document.getElementById('formSection');
+    const resultModal = document.getElementById('resultModal');
+
+    // Motor de contingência cliente para GitHub Pages estático
+    function clientAnalyze(comentario, nota) {
+      const text = (comentario || "").toLowerCase();
+      const critWords = ["péssimo", "horrível", "ruim", "frio", "atraso", "demorou", "absurdo", "cru", "errado", "queimado", "nojento"];
+      const posWords = ["ótimo", "excelente", "maravilhoso", "delícia", "muito bom", "perfeito", "top", "saboroso", "recomendo"];
+      
+      const tags = [];
+      if (/entrega|motoboy|demorou|atraso|tempo/.test(text)) tags.push("Entrega");
+      if (/sabor|lanche|carne|ponto|molho|queijo|bacon/.test(text)) tags.push("Sabor");
+      if (/atendimento|garçom|educação/.test(text)) tags.push("Atendimento");
+      if (/frio|gelado|quentinho/.test(text)) tags.push("Temperatura");
+      if (tags.length === 0) tags.push("Geral");
+
+      const isCrit = nota <= 2 || critWords.some(w => text.includes(w));
+      const isPos = !isCrit && (nota >= 4 || posWords.some(w => text.includes(w)));
+      const sent = isCrit ? "Crítico" : (isPos ? "Positivo" : "Neutro");
+
+      return {
+        id: "fb_cli_" + Date.now().toString(36),
+        timestamp: new Date().toISOString(),
+        sentimento: sent,
+        tags: tags,
+        detalhes_analise: `Analisado via IA (${sent}).`,
+        status: isCrit ? "pendente" : "lida",
+        alerta_disparado: isCrit
+      };
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const payload = {
+        nome: document.getElementById('nome').value.trim(),
+        contato: document.getElementById('contato').value.trim(),
+        pedido_id: document.getElementById('pedido_id').value.trim() || 'N/A',
+        nota: currentRating,
+        comentario: document.getElementById('comentario').value.trim()
+      };
+
+      if (!payload.comentario) {
+        alert('Por favor, informe seu comentário.');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      btnText.textContent = "Processando com Inteligência Artificial...";
+      spinner.style.display = "inline-block";
+
+      try {
+        let sent, feedbackData;
+        
+        // Tenta API REST local/nuvem primeiro
+        try {
+          const res = await fetch('/api/feedbacks', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          if (res.ok) {
+            const data = await res.json();
+            feedbackData = data.feedback;
+            sent = feedbackData.sentimento;
+          }
+        } catch (apiErr) {
+          // Em caso de página estática (GitHub Pages sem backend ativo), ativa modo local storage
+          console.warn('API backend offline ou em GitHub Pages estático. Utilizando motor client-side.');
+        }
+
+        if (!feedbackData) {
+          const localAnalysis = clientAnalyze(payload.comentario, payload.nota);
+          feedbackData = { ...payload, ...localAnalysis };
+          sent = feedbackData.sentimento;
+
+          // Salva no localStorage
+          const localDB = JSON.parse(localStorage.getItem('burgersync_feedbacks') || '[]');
+          localDB.unshift(feedbackData);
+          localStorage.setItem('burgersync_feedbacks', JSON.stringify(localDB));
+        }
+
+        formSection.style.display = 'none';
+        resultModal.style.display = 'block';
+        
+        const badge = document.getElementById('resBadge');
+        const desc = document.getElementById('resDesc');
+        const icon = document.getElementById('resIcon');
+
+        if (sent === 'Crítico') {
+          icon.textContent = "🚨";
+          badge.className = "result-badge badge-critico";
+          badge.textContent = "Alerta Prioritário Acionado";
+          desc.textContent = "Lamentamos muito pelo inconveniente! Identificamos sua experiência como crítica e nosso gerente de atendimento em Ourinhos foi notificado imediatamente para contato direto.";
+        } else if (sent === 'Positivo') {
+          icon.textContent = "🍔⭐";
+          badge.className = "result-badge badge-positivo";
+          badge.textContent = "Feedback Positivo";
+          desc.textContent = "Ficamos muito felizes que você tenha apreciado a experiência BurgerSync! Seu elogio foi compartilhado com nossa equipe de cozinha e entregas.";
+        } else {
+          icon.textContent = "📝";
+          badge.className = "result-badge badge-neutro";
+          badge.textContent = "Avaliação Registrada";
+          desc.textContent = "Obrigado por suas observações e sugestões! Elas nos ajudam a aprimorar nossos lanches e serviços diariamente.";
+        }
+
+      } catch (err) {
+        console.error(err);
+        alert('Erro ao enviar avaliação. Tente novamente.');
+      } finally {
+        submitBtn.disabled = false;
+        btnText.textContent = "Enviar Minha Avaliação";
+        spinner.style.display = "none";
+      }
+    });
+
+    function resetForm() {
+      form.reset();
+      currentRating = 5;
+      updateStars(5);
+      resultModal.style.display = 'none';
+      formSection.style.display = 'block';
+    }
+  </script>
+</body>
+</html>
