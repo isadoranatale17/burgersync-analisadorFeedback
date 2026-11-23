@@ -1,0 +1,135 @@
+[
+  {
+    "timestamp": "2026-11-23T18:38:34Z",
+    "nome": "Mariana Souza",
+    "contato": "(14) 99111-2222",
+    "pedido_id": "ORD-API-55",
+    "nota": 1,
+    "comentario": "O motoboy foi grosseiro e o refrigerante veio vazando na sacola toda murcha!",
+    "sentimento": "Crítico",
+    "tags": [
+      "Embalagem",
+      "Entrega"
+    ],
+    "detalhes_analise": "Classificado como Crítico via contingência local devido a indicadores de insatisfação (Nota: 1, Termos críticos identificados).",
+    "status": "pendente",
+    "alerta_disparado": true,
+    "alerta_detalhe": {
+      "status": "fallback_local",
+      "sucesso": true,
+      "detalhe": "Registrado em .tmp/alerts.log"
+    },
+    "id": "fb_56586697"
+  },
+  {
+    "nome": "Cliente Teste",
+    "contato": "(14) 99999-0000",
+    "pedido_id": "ORD-TEST-99",
+    "nota": 5,
+    "comentario": "Hambúrguer excelente e carne suculenta!",
+    "sentimento": "Positivo",
+    "tags": [
+      "Sabor",
+      "Qualidade"
+    ],
+    "detalhes_analise": "Teste automatizado",
+    "id": "fb_c826d6a9",
+    "timestamp": "2026-11-23T18:38:33Z",
+    "status": "resolvida",
+    "updated_at": "2026-11-23T18:38:33Z"
+  },
+  {
+    "timestamp": "2026-11-23T18:37:21Z",
+    "nome": "Mariana Souza",
+    "contato": "(14) 99111-2222",
+    "pedido_id": "ORD-API-55",
+    "nota": 1,
+    "comentario": "O motoboy foi grosseiro e o refrigerante veio vazando na sacola toda murcha!",
+    "sentimento": "Crítico",
+    "tags": [
+      "Embalagem",
+      "Entrega"
+    ],
+    "detalhes_analise": "Classificado como Crítico via contingência local devido a indicadores de insatisfação (Nota: 1, Termos críticos identificados).",
+    "status": "pendente",
+    "alerta_disparado": true,
+    "alerta_detalhe": {
+      "status": "fallback_local",
+      "sucesso": true,
+      "detalhe": "Registrado em .tmp/alerts.log"
+    },
+    "id": "fb_562a4dbe"
+  },
+  {
+    "nome": "Cliente Teste",
+    "contato": "(14) 99999-0000",
+    "pedido_id": "ORD-TEST-99",
+    "nota": 5,
+    "comentario": "Hambúrguer excelente e carne suculenta!",
+    "sentimento": "Positivo",
+    "tags": [
+      "Sabor",
+      "Qualidade"
+    ],
+    "detalhes_analise": "Teste automatizado",
+    "id": "fb_177faa9b",
+    "timestamp": "2026-11-23T18:36:40Z",
+    "status": "resolvida",
+    "updated_at": "2026-11-23T18:36:40Z"
+  },
+  {
+    "id": "fb_demo_01",
+    "timestamp": "2026-11-23T12:30:00Z",
+    "nome": "Lucas Martins",
+    "contato": "(14) 99876-1122",
+    "pedido_id": "ORD-1042",
+    "nota": 5,
+    "comentario": "O Burger Trufado com maionese da casa estava sensacional! O ponto da carne perfeito e chegou muito rápido aqui na Vila Operária.",
+    "sentimento": "Positivo",
+    "tags": [
+      "Sabor",
+      "Qualidade",
+      "Entrega"
+    ],
+    "status": "resolvida",
+    "alerta_disparado": false,
+    "detalhes_analise": "Elogio enfático ao sabor do lanche e à rapidez da entrega."
+  },
+  {
+    "id": "fb_demo_02",
+    "timestamp": "2026-11-23T13:15:00Z",
+    "nome": "Fernanda Lima",
+    "contato": "(14) 99765-3344",
+    "pedido_id": "ORD-1049",
+    "nota": 3,
+    "comentario": "O hambúrguer é bom, mas a batata frita chegou meio murcha e fria. Poderiam melhorar a embalagem de entrega.",
+    "sentimento": "Neutro",
+    "tags": [
+      "Entrega",
+      "Embalagem",
+      "Sabor"
+    ],
+    "status": "lida",
+    "alerta_disparado": false,
+    "detalhes_analise": "Feedback moderado com sugestão de melhoria na embalagem térmica da batata."
+  },
+  {
+    "id": "fb_demo_03",
+    "timestamp": "2026-11-23T14:40:00Z",
+    "nome": "Carlos Eduardo",
+    "contato": "(14) 99123-5566",
+    "pedido_id": "ORD-1055",
+    "nota": 1,
+    "comentario": "Um absurdo! Esperei mais de 1 hora e 40 minutos pelo pedido. Quando chegou, o lanche estava completamente frio e o refrigerante veio errado. Péssima experiência!",
+    "sentimento": "Crítico",
+    "tags": [
+      "Entrega",
+      "Atraso",
+      "Erro de Pedido",
+      "Temperatura"
+    ],
+    "status": "pendente",
+    "alerta_disparado": true,
+    "detalhes_analise": "Reclamação grave de atraso excessivo e erro no item entregue. Risco de churn do cliente."
+  }
+]

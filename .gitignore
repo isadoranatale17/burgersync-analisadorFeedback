@@ -1,0 +1,22 @@
+# Environment variables
+.env
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+
+# Temporary files and logs
+.tmp/*
+!.tmp/.gitkeep
+*.log
+
+# OS artifacts
+.DS_Store
+Thumbs.db
